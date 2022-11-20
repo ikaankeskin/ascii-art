@@ -9,11 +9,31 @@ import (
 
 func main() {
 
-	// if len(os.Args) == 1 {
-	// 	return
-	// }
+	usage := `Usage: go run . [OPTION]
+	
+EX: go run . --reverse=<fileName>`
 
-	f, e := os.Open("../fonts/standard.txt")
+	if len(os.Args) == 1 {
+		fmt.Println(usage)
+		// fmt.Println("Usage: go run . [OPTION]")
+		// fmt.Println("EX: go run . --reverse=<fileName>")
+		return
+	}
+
+	template := "fonts/standard.txt"
+	filename := ""
+	args := os.Args[1:]
+	for _, v := range args {
+		if len(v) > 10 && v[:10] == "--reverse=" {
+			filename = v[10:]
+		} else {
+			fmt.Println("Usage: go run . [OPTION]")
+			fmt.Println("EX: go run . --reverse=<fileName>")
+			return
+		}
+	}
+
+	f, e := os.Open(template)
 	if e != nil {
 		fmt.Println(e.Error())
 		os.Exit(0)
@@ -22,8 +42,8 @@ func main() {
 	content := bufio.NewReader(f)
 
 	f.Seek(0, 0)
-
-	j, e := os.Open("alphabet.txt")
+	filename = "output_test.txt"
+	j, e := os.Open("audit/" + filename)
 	if e != nil {
 		fmt.Println(e.Error())
 		os.Exit(0)
@@ -34,16 +54,6 @@ func main() {
 	j.Seek(0, 0)
 	inputcontent := bufio.NewReader(j)
 
-	// scanner := bufio.NewScanner(inputcontent)
-	// scan or read the bytes of text line by line
-	// for scanner.Scan() {
-	// 	fmt.Println(scanner)
-
-	// 	// }
-	// 	// println(match)
-	// }
-
-	// fmt.Println(scanner.Text())
 	var dstr []string
 	/*
 		It creates a 2D array of strings.
@@ -54,17 +64,12 @@ func main() {
 	database := ""
 	input := ""
 
-	// fmt.Println(input)
 	num := 1000
 	for i := 0; i < num; i++ {
 		database, _ = content.ReadString('\n')
 		dstr = append(dstr, database)
 	}
 	b := 0
-	// input, _ = inputcontent.ReadString('\n')
-	// input = strings.TrimSuffix(input, "\n")
-	// a := len(input)
-	// fmt.Println(a)
 
 	for i := 0; i < 8; i++ {
 		input, _ = inputcontent.ReadString('\n')
@@ -76,9 +81,8 @@ func main() {
 		}
 	}
 
-	// fmt.Println(inputbase[5][6])
-	// fmt.Println(inputbase[5][7])
 	memory := 0
+	result := ""
 
 	for j := 0; j < b; j++ {
 		i := 0
@@ -126,25 +130,18 @@ func main() {
 						line7 = line7 + string(v)
 					}
 				}
-
 			}
-			// fmt.Println(line0)
-			// fmt.Println(line1)
-			// fmt.Println(line2)
-			// fmt.Println(line3)
-			// fmt.Println(line4)
-			// fmt.Println(line5)
-			// fmt.Println(line6)
-			// fmt.Println(line7)
+
 			for index := 0; index < num; index++ {
-				if (strings.TrimRight(dstr[index], "\n") == line0) && (strings.TrimRight(dstr[index+1], "\n") == line1) && (strings.TrimRight(dstr[index+2], "\n") == line2) && (strings.TrimRight(dstr[index+3], "\n") == line3) && (strings.TrimRight(dstr[index+4], "\n") == line4) && (strings.TrimRight(dstr[index+5], "\n") == line5) {
+				if (strings.TrimRight(dstr[index], "\n") == line0) && (strings.TrimRight(dstr[index+1], "\n") == line1) && (strings.TrimRight(dstr[index+2], "\n") == line2) && (strings.TrimRight(dstr[index+3], "\n") == line3) && (strings.TrimRight(dstr[index+4], "\n") == line4) && (strings.TrimRight(dstr[index+5], "\n") == line5) && (strings.TrimRight(dstr[index+6], "\n") == line6) {
 					match = index
 					// fmt.Println(match)
 					// break
 				}
 			}
 
-			fmt.Printf(string(((match - 1) / 9) + 32))
+			result = result + string(((match-1)/9)+32)
+
 			line0 = ""
 			line1 = ""
 			line2 = ""
@@ -153,14 +150,19 @@ func main() {
 			line5 = ""
 			line6 = ""
 			line7 = ""
-			// match = 0
 
 			continue
 
 		}
 
 	}
-	fmt.Println()
+	resultarray := split_white_spaces(result)
+	str := ""
+	for _, word := range resultarray {
+		str = str + word + " "
+	}
+	str = remove_spaces(str)
+	fmt.Println(str)
 
 }
 
@@ -179,160 +181,32 @@ func lenfinder(s []string, t int) int {
 	return len(s[t])
 }
 
-// fmt.Println(dstr)
+func remove_spaces(s string) string {
+	len := len(s) - 1
+	if s[len-1] == ' ' {
+		return remove_spaces(s[:len])
+	}
+	return s[:len]
+}
 
-// for i, v := range dstr {
-// 	fmt.Println(i)
-// 	fmt.Println(v)
-// }
+func split_white_spaces(s string) []string {
+	var str []string
+	var word string
+	l := len(s) - 1
 
-// fmt.Println(strings.Contains(dstr, input))
-
-// database = strings.TrimSuffix(database, "\n")
-
-// s = strings.TrimSuffix(s, "\n")
-// if s == "" {
-// 	continue
-// }
-// for iindex := 0; iindex <= 8; iindex++ {
-// 	input, _ = inputcontent.ReadString('\n')
-// input = strings.TrimSuffix(input, "\n")
-// 	// if input == "" {
-// 	// 	continue
-// 	// }
-// 	// if len(input) != len(s) {
-// 	// 	continue
-// 	// }
-// 	if s == input && s != "" {
-// 		fmt.Println(input)
-// 	}
-
-// 	// for _, v := range input {
-// 	// 	fmt.Printf(string(v))
-// 	// }
-// 	// fmt.Println()
-// 	// input = ""
-// }
-
-// if s == input {
-// 	// fmt.Println(len(s) + len(input))
-// 	// fmt.Println(len(input))
-// 	// fmt.Println("there is something")
-
-// 	fmt.Printf("matched:")
-// 	fmt.Println(s)
-// 	fmt.Printf("at:")
-// 	fmt.Println(i)
-// }
-// fmt.Println(s)
-// s = ""
-// fmt.Printf(s)
-// i = i + 8
-
-// fmt.Println()
-/*
-	The above code reads a line from the file and stores it in the variable s.
-*/
-// s, _ = content.ReadString('\n')
-// fmt.Println(s)
-// s = strings.TrimSuffix(s, "\n")
-// fmt.Println(s)
-
-// func AsciArt(s string) string {
-
-// 	f, e := os.Create("output_test.txt")
-// 	if e != nil {
-// 		os.Exit(0)
-// 	}
-// 	res := ""
-
-// 	severallines := false
-
-// 	var sarray []string
-// 	for _, v := range s {
-// 		sarray = append(sarray, string(v))
-// 	}
-
-// 	end := len(sarray) - 1
-
-// 	for i, _ := range sarray {
-// 		if i != 0 {
-// 			if i == end && sarray[i] == "!" && sarray[i-1] == "\\" {
-// 				sarray = remove(sarray, i-1)
-// 				i = i - 1
-// 			}
-// 			if sarray[i] == "n" && sarray[i-1] == "\\" {
-// 				// if i < 3 {
-// 				// 	severallines = false
-// 				// } else {
-// 				severallines = true
-// 				// }
-// 			}
-// 		}
-// 	}
-
-// 	s = strings.Join(sarray, "")
-
-// 	if severallines {
-// 		args := strings.Split(s, "\\n")
-// 		single := len(args) - 1
-// 		for _, word := range args {
-// 			if single == 1 && word == "" {
-// 				fmt.Println()
-// 				return (".")
-// 			}
-// 			if word == "" {
-// 				fmt.Println()
-// 			} else {
-// 				for i := 0; i < 8; i++ {
-// 					for _, letter := range word {
-// 						res += GetLine(2 + int(letter-' ')*9 + i)
-// 					}
-// 					fmt.Println(res)
-// 					fmt.Fprintln(f, res)
-// 					res = ""
-// 				}
-// 			}
-// 		}
-
-// 	} else {
-// 		for i := 0; i < 8; i++ {
-// 			for _, letter := range s {
-
-// 				res += GetLine(2 + int(letter-' ')*9 + i)
-// 			}
-// 			fmt.Println(res)
-// 			fmt.Fprintln(f, res)
-// 			res = ""
-// 		}
-// 	}
-// 	f.Close()
-// 	return s
-// }
-
-// func GetLine(num int) string {
-// 	s := ""
-// 	f, e := os.Open("../fonts/standard.txt")
-// 	if e != nil {
-// 		fmt.Println(e.Error())
-// 		os.Exit(0)
-// 	}
-// 	defer f.Close()
-
-// 	f.Seek(0, 0)
-
-// 	content := bufio.NewReader(f)
-// 	for i := 0; i < num; i++ {
-// 		/*
-// 			The above code reads a line from the file and stores it in the string s.
-// 		*/
-// 		s, _ = content.ReadString('\n')
-// 	}
-
-// 	s = strings.TrimSuffix(s, "\n")
-// 	return s
-// }
-
-//	func remove(slice []string, s int) []string {
-//		return append(slice[:s], slice[s+1:]...)
-//	}
+	for i, v := range s {
+		if i == l {
+			word = word + string(v)
+			str = append(str, word)
+		} else if v == 32 || v == 15 || v == 10 {
+			if s[i+1] == ' ' || s[i+1] == '	' || s[i+1] == 10 {
+			} else {
+				str = append(str, word)
+				word = ""
+			}
+		} else {
+			word = word + string(v)
+		}
+	}
+	return str
+}
